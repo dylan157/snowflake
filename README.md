@@ -8,22 +8,36 @@ Call the program with "./snowflake.py" to generate a random image or add argumen
 ./snowflake.py 12 12 12 10 1 1 False 1980 1080
 
 args: (must add all)
+
 1:first rgb addition.  (0 = random)
+
 2:second rgb addition. (0 = random)
+
 3:third rgb addition.  (0 = random)
+
 4:Pixel size.          (min 5)
+
 5:addition curve       (0=off)
+
 6:image blend.         (0=off)
+
 7:image width          (4k max)
+
 8:image height         (4k max)
 
 Args explanation:
 
+
 1-3: These are the rgb additions. if you entered (1, 1 ,1) as your 3 args. The rgb value of each pixel will increase by one. EG:
+
 pixel 1: (1, 1 ,1)
+
 pixel 2: (2, 2, 2)
+
 pixel 3: (3, 3 ,3)
+
 see these pixel color values here: https://www.w3schools.com/colors/colors_rgb.asp
+
 
 4: This is the pixel size squared. 
 
