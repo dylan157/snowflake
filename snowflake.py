@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import os
+os.environ.setdefault('PATH', '')
 import pygame, sys, os
 from random import randint
 from datetime import datetime
@@ -24,6 +26,16 @@ class image(object):
             self.height = int(height)
             os.environ["SDL_VIDEODRIVER"] = "dummy"
             pygame.display.init()
+
+            if self.height > 4000:
+                self.height = 4000
+            if self.width > 4000:
+                self.width = 4000
+            if self.height < 50:
+                self.height = 50
+            if self.width < 50:
+                self.width = 50
+
             self.screen = pygame.display.set_mode((self.height, self.width))
 
         except:
@@ -35,8 +47,6 @@ class image(object):
         addition_limit = randint(2, 244)
         self.hex_values = []
         self.hex_additions = []
-
-
         if int(self.merge) > 0 and self.random and self.check:
             self.size = randint(3, 20)
             self.hex_values.append([randint(0, 20), randint(0, 20), randint(0, 20)])
@@ -70,7 +80,6 @@ class image(object):
                 self.hex_additions.append([randint(1, addition_limit), randint(1, addition_limit), randint(1, addition_limit)])
                 self.error_message = ("Hex addition invalid. randomising addition. Input: 1;"+str(self.hex_add_1)+" 2;"+str(self.hex_add_2)+" 3;"+str(self.hex_add_3)+" size;"+str(self.size))
                 for images in range(self.merge):
-                    self.size = randint(3, 20)
                     self.hex_values.append([randint(0, 20), randint(0, 20), randint(0, 20)])
                     self.hex_additions.append([randint(1, addition_limit), randint(1, addition_limit), randint(1, addition_limit)])
         return
@@ -80,7 +89,6 @@ class image(object):
     def generate(self):
         x = 0
         y = 0
-
         addition_limit = randint(2, 244)
 
         #pixel colors:
@@ -116,7 +124,8 @@ class image(object):
                     self.hex_values[image_num][1] = randint(1, int(self.curve))
                 if self.hex_values[image_num][2] >255:
                     self.hex_values[image_num][2] = randint(1, int(self.curve))
-            image_num += 1
+            if self.merge > 0:  
+                image_num += 1
 
             save_file_text += str(final_hex_values[0]) +" "+ str(final_hex_values[1]) +" "+ str(final_hex_values[2])+" "
             if x < self.width: x += self.size
@@ -127,10 +136,10 @@ class image(object):
         draw(save_file_text, self.screen)
         pygame.display.update()
 
-        filename = str(self.size)+"A"+str(self.hex_additions[0][0])+str(self.hex_additions[0][1])+str(self.hex_additions[0][2])+"B"+str(randint(0,55))
-        print(filename+".jpg")
-        pygame.image.save(self.screen, str(filename)+".jpg")
-        return (filename+".jpg")
+        filename = str(self.size)+"A"+str(self.hex_additions[0][0])+"_"+str(self.hex_additions[0][1])+"_"+str(self.hex_additions[0][2])+"B"+str(randint(0,255))
+        print(filename+".png")
+        pygame.image.save(self.screen, str(filename)+".png")
+        return (filename+".png")
 
 
 
@@ -145,7 +154,8 @@ def draw(file, screen):
             print("file not found")
             return 0
     else: b = file.split()
-
+    print(len(b)/3)
+    print(g.width*g.height/g.size)
     size = int(b[0])
     res = width, height = int(b[1]), int(b[2])
     if screen == "":
@@ -163,20 +173,27 @@ def draw(file, screen):
     counter = 3
 
     for p in range(10000000):
-        final_hex_values = [int(b[counter]), int(b[counter+1]), int(b[counter+2])]
-        pygame.draw.rect(screen, final_hex_values, [x, y, int(size), int(size)]) 
-        counter += 3
-        if x < width: x += size
-        else: 
-            x = 0
-            if y < height: y += size
+        try:
+            final_hex_values = [int(b[counter]), int(b[counter+1]), int(b[counter+2])]
+            pygame.draw.rect(screen, final_hex_values, [x, y, int(size), int(size)]) 
+            counter += 3
+            if x < width: x += size
             else: 
-                pygame.display.update()
-                break
+                x = 0
+                if y < height: y += size
+                else: 
+                    pygame.display.update()
+                    break
+        except: break
 
 #g = image(1, 10, 10, 1, 1, 4, False)
-if len(sys.argv)>1:
+for x in sys.argv:
+    print(x)
+if len(sys.argv)>7:
     g = image(sys.argv[1], sys.argv[2], sys.argv[3], sys.argv[4], sys.argv[5], sys.argv[6], sys.argv[7], sys.argv[8], sys.argv[9])
-else:
-    g = image(1, 10, 10, 1, 1, 4, False, 500, 500)
+elif len(sys.argv)==5:
+    g = image(1, 10, 10, 1, 1, 4, True, sys.argv[3], sys.argv[4])
+else: g = image(1, 10, 10, 10, 1, 0, False, 1500, 1500)
+	
+
 g.generate()
